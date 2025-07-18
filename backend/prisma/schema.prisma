@@ -1,0 +1,181 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and profiles
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  role      UserRole @default(CONSUMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  reviews   Review[]
+  quotes    Quote[]
+
+  @@map("users")
+}
+
+// Company model for solar energy companies
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  website     String?
+  phone       String?
+  email       String?
+  logo        String?
+  verified    Boolean  @default(false)
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Location data
+  address     String?
+  city        String?
+  state       String?
+  zipCode     String?
+  latitude    Float?
+  longitude   Float?
+
+  // Relations
+  users     User[]
+  services  CompanyService[]
+  reviews   Review[]
+  projects  Project[]
+  quotes    Quote[]
+
+  @@map("companies")
+}
+
+// Service model for different types of solar services
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  companies CompanyService[]
+
+  @@map("services")
+}
+
+// Junction table for companies and services
+model CompanyService {
+  id        String   @id @default(uuid())
+  companyId String
+  serviceId String
+  createdAt DateTime @default(now())
+
+  // Relations
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, serviceId])
+  @@map("company_services")
+}
+
+// Review model for user reviews of companies
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int      @db.SmallInt
+  title     String?
+  content   String?
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@map("reviews")
+}
+
+// Project model for solar energy projects
+model Project {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANNED)
+  capacity    Float?      // kW capacity
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Location data
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  latitude  Float?
+  longitude Float?
+
+  // Relations
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@map("projects")
+}
+
+// Quote model for quote requests
+model Quote {
+  id          String     @id @default(uuid())
+  status      QuoteStatus @default(PENDING)
+  description String?
+  budget      Float?
+  message     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+
+  @@map("quotes")
+}
+
+// Enums
+enum UserRole {
+  CONSUMER
+  COMPANY_ADMIN
+  COMPANY_USER
+  ADMIN
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum QuoteStatus {
+  PENDING
+  RESPONDED
+  ACCEPTED
+  REJECTED
+}
+

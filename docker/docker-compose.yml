@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: insidesolar-postgres
+    environment:
+      POSTGRES_DB: insidesolar
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - insidesolar-network
+
+  # TimescaleDB (PostgreSQL extension for time-series data)
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: insidesolar-timescaledb
+    environment:
+      POSTGRES_DB: insidesolar_timeseries
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    networks:
+      - insidesolar-network
+
+  # Backend (NestJS)
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: insidesolar-backend
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres123@postgres:5432/insidesolar"
+      TIMESCALE_URL: "postgresql://postgres:postgres123@timescaledb:5432/insidesolar_timeseries"
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - timescaledb
+    networks:
+      - insidesolar-network
+    volumes:
+      - ../backend:/app
+      - /app/node_modules
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: insidesolar-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3001
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - insidesolar-network
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  postgres_data:
+  timescale_data:
+
+networks:
+  insidesolar-network:
+    driver: bridge
+
