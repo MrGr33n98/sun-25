@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { LogIn, Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Link from "next/link";
+import { login as loginRequest } from "@/lib/services/auth";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -30,23 +31,12 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // In real app, make API call here
-      console.log("Login attempt:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simulate successful login
-      localStorage.setItem('user', JSON.stringify({
-        id: '1',
-        email: formData.email,
-        name: 'Usuário Teste',
-        role: 'consumer'
-      }));
-      
-      // Redirect to dashboard or home
-      window.location.href = '/';
-      
+      const data = await loginRequest(formData);
+      localStorage.setItem("token", data.access_token);
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+      window.location.href = "/";
     } catch (error) {
       console.error("Login error:", error);
       setError("Credenciais inválidas. Tente novamente.");
