@@ -1,0 +1,19 @@
+# OS artifacts
+.DS_Store
+
+# Environment files
+.env*
+
+# Logs
+*.log
+logs/
+log/
+
+# Build outputs
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+
