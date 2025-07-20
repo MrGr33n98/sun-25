@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,110 +17,30 @@ import {
   Globe
 } from "lucide-react";
 import Link from "next/link";
+import { getCompanies } from "@/lib/services/companies";
 
 export default function EmpresasPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Mock data - in real app, this would come from API
-  const companies = [
-    {
-      id: "1",
-      name: "SolarTech Brasil",
-      description: "Especializada em sistemas fotovoltaicos residenciais e comerciais com mais de 15 anos de experiência no mercado brasileiro.",
-      rating: 4.8,
-      reviewCount: 234,
-      city: "São Paulo",
-      state: "SP",
-      projectCount: 450,
-      verified: true,
-      logo: "ST",
-      services: ["Residencial", "Comercial", "Industrial"],
-      phone: "(11) 99999-9999",
-      email: "contato@solartech.com.br",
-      website: "www.solartech.com.br"
-    },
-    {
-      id: "2",
-      name: "Energia Verde Ltda",
-      description: "Empresa focada em soluções sustentáveis de energia solar para residências e pequenos comércios.",
-      rating: 4.6,
-      reviewCount: 189,
-      city: "Rio de Janeiro",
-      state: "RJ",
-      projectCount: 320,
-      verified: true,
-      logo: "EV",
-      services: ["Residencial", "Comercial"],
-      phone: "(21) 88888-8888",
-      email: "info@energiaverde.com.br",
-      website: "www.energiaverde.com.br"
-    },
-    {
-      id: "3",
-      name: "Sol & Cia",
-      description: "Instalação e manutenção de sistemas solares com garantia estendida e suporte técnico 24/7.",
-      rating: 4.9,
-      reviewCount: 156,
-      city: "Belo Horizonte",
-      state: "MG",
-      projectCount: 280,
-      verified: true,
-      logo: "SC",
-      services: ["Residencial", "Manutenção"],
-      phone: "(31) 77777-7777",
-      email: "contato@solecia.com.br",
-      website: "www.solecia.com.br"
-    },
-    {
-      id: "4",
-      name: "PowerSun Energia",
-      description: "Líder em projetos de grande porte, atendendo indústrias e complexos comerciais em todo o país.",
-      rating: 4.7,
-      reviewCount: 298,
-      city: "Porto Alegre",
-      state: "RS",
-      projectCount: 520,
-      verified: true,
-      logo: "PS",
-      services: ["Industrial", "Comercial", "Residencial"],
-      phone: "(51) 66666-6666",
-      email: "vendas@powersun.com.br",
-      website: "www.powersun.com.br"
-    },
-    {
-      id: "5",
-      name: "EcoSolar Nordeste",
-      description: "Especializada no mercado nordestino, aproveitando o alto índice de irradiação solar da região.",
-      rating: 4.5,
-      reviewCount: 167,
-      city: "Fortaleza",
-      state: "CE",
-      projectCount: 380,
-      verified: true,
-      logo: "EN",
-      services: ["Residencial", "Comercial", "Rural"],
-      phone: "(85) 55555-5555",
-      email: "contato@ecosolar.com.br",
-      website: "www.ecosolar.com.br"
-    },
-    {
-      id: "6",
-      name: "Solar Inovação",
-      description: "Empresa jovem e inovadora, focada em tecnologias de ponta e soluções personalizadas.",
-      rating: 4.4,
-      reviewCount: 89,
-      city: "Brasília",
-      state: "DF",
-      projectCount: 150,
-      verified: false,
-      logo: "SI",
-      services: ["Residencial", "Comercial"],
-      phone: "(61) 44444-4444",
-      email: "info@solarinovacao.com.br",
-      website: "www.solarinovacao.com.br"
-    }
-  ];
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      setLoading(true);
+      try {
+        const response = await getCompanies();
+        setCompanies(response.data || response);
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao carregar empresas");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCompanies();
+  }, []);
 
   const filteredCompanies = companies.filter(company =>
     company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -217,9 +137,14 @@ export default function EmpresasPage() {
 
         {/* Results Count */}
         <div className="mb-6">
-          <p className="text-gray-600">
-            Mostrando {filteredCompanies.length} de {companies.length} empresas
-          </p>
+          {loading ? (
+            <p className="text-gray-600">Carregando empresas...</p>
+          ) : (
+            <p className="text-gray-600">
+              Mostrando {filteredCompanies.length} de {companies.length} empresas
+            </p>
+          )}
+          {error && <p className="text-red-600 text-sm">{error}</p>}
         </div>
 
         {/* Companies Grid */}
