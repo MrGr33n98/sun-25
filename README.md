@@ -9,6 +9,8 @@
 ## 🌟 Sobre o Projeto
 
 O **InsideSolar** é uma plataforma completa inspirada no G2.com, especificamente desenvolvida para o mercado brasileiro de energia solar. A aplicação conecta consumidores com empresas especializadas em energia solar, oferecendo um marketplace robusto com funcionalidades avançadas de comparação, avaliação e contratação de serviços.
+> **Aviso**: este repositório contém um protótipo inicial e muitas funcionalidades descritas ainda estão em desenvolvimento.
+
 
 ### 🎯 Objetivos
 
@@ -20,28 +22,18 @@ O **InsideSolar** é uma plataforma completa inspirada no G2.com, especificament
 
 ## 🚀 Funcionalidades Principais
 
-### Para Consumidores
-- 🔍 **Busca Avançada**: Encontre empresas por localização, serviços e avaliações
-- 📊 **Comparação Detalhada**: Compare múltiplas empresas lado a lado
-- ⭐ **Sistema de Avaliações**: Avaliações verificadas de clientes reais
-- 🗺️ **Mapa Interativo**: Visualize empresas próximas geograficamente
-- 💬 **Solicitação de Orçamentos**: Receba propostas personalizadas
-- 📱 **Interface Responsiva**: Acesso completo via mobile e desktop
+### Funcionalidades atuais
+- Estrutura inicial de frontend em Next.js
+- Operacoes basicas de empresas e avaliacoes
+- Pagina de mapa com dados de exemplo
+- Configuracao de autenticacao JWT (incompleta)
 
-### Para Empresas
-- 🏢 **Perfil Empresarial**: Showcase completo de serviços e projetos
-- 📈 **Dashboard Analytics**: Métricas de performance e leads
-- 💼 **Gestão de Orçamentos**: Sistema integrado de propostas
-- 🎯 **Lead Generation**: Receba clientes qualificados
-- ✅ **Verificação de Credibilidade**: Selo de empresa verificada
+### Funcionalidades planejadas
+- Busca avancada e filtros
+- Sistema integrado de orcamentos
+- Dashboard para empresas
+- Cadastro completo de usuarios
 
-### Funcionalidades Técnicas
-- 🔐 **Autenticação Segura**: Sistema JWT com múltiplos perfis
-- 🌐 **API RESTful**: Backend robusto com NestJS
-- 📊 **Banco de Dados Escalável**: PostgreSQL com Prisma ORM
-- 🐳 **Containerização**: Deploy com Docker
-- 🚀 **CI/CD**: Pipeline automatizado com GitHub Actions
-- 📱 **PWA Ready**: Funcionalidades de aplicativo móvel
 
 ## 🛠️ Stack Tecnológica
 
@@ -322,21 +314,8 @@ Para suporte e dúvidas:
 
 ## 🔄 Roadmap
 
-### Versão 2.0 (Planejado)
-- [ ] Integração com APIs de financiamento
-- [ ] Sistema de chat em tempo real
-- [ ] Aplicativo mobile nativo
-- [ ] Integração com CRM empresarial
-- [ ] Analytics avançados
-- [ ] Marketplace de equipamentos
-
-### Melhorias Contínuas
-- [ ] Otimização de performance
-- [ ] Testes automatizados expandidos
-- [ ] Documentação interativa da API
-- [ ] Monitoramento e logs avançados
-
----
-
-**InsideSolar** - Conectando o Brasil à energia solar do futuro! ☀️🇧🇷
+O desenvolvimento ainda está em estágio inicial. As prioridades para as próximas versões são:
+- Consolidar o módulo de autenticação
+- Adicionar busca e filtros de empresas
+- Integrar o sistema de solicitações de orçamento
 
